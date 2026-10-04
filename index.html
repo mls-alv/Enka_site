@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enka ♡</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="logo">enka <span>♡</span></div>
+
+    <button class="profile-btn" onclick="openProfile()">
+      👤
+    </button>
+  </header>
+
+
+  <main>
+
+    <!-- PRESENTATION ENKA -->
+
+    <section class="enka-hero">
+
+      <div class="enka-character">
+        <div class="character-face">
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+          <div class="mouth">⌣</div>
+        </div>
+
+        <div class="character-heart">♡</div>
+      </div>
+
+      <div class="enka-intro">
+
+        <div class="online">
+          <span></span>
+          Enka est là
+        </div>
+
+        <h1>
+          Coucou, moi c'est <span>Enka</span> 👋
+        </h1>
+
+        <p>
+          Tu peux me parler de ce que tu veux.
+          Je vais essayer de t'aider, de t'écouter
+          et de te donner des conseils sans te juger.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- CHAT -->
+
+    <section class="chat-container">
+
+      <div class="chat-header">
+
+        <div class="chat-profile">
+
+          <div class="mini-character">
+            ♡
+          </div>
+
+          <div>
+            <strong>Enka</strong>
+            <small>Ton assistante</small>
+          </div>
+
+        </div>
+
+        <button onclick="clearChat()" class="clear-btn">
+          ↻
+        </button>
+
+      </div>
+
+
+      <!-- MESSAGES -->
+
+      <div id="chatMessages" class="chat-messages">
+
+        <div class="message enka-message">
+
+          <div class="message-avatar">
+            ♡
+          </div>
+
+          <div class="bubble">
+            Coucou 👋 Je suis Enka !
+            <br><br>
+            Tu peux me poser une question,
+            me parler d'un problème ou simplement
+            me demander conseil. 💜
+          </div>
+
+        </div>
+
+
+        <div class="suggestions">
+
+          <button onclick="useSuggestion('Je me sens un peu perdu(e), tu peux m’aider ?')">
+            💭 Je me sens perdu(e)
+          </button>
+
+          <button onclick="useSuggestion('J’ai un problème avec un ami')">
+            🫶 Problème avec un ami
+          </button>
+
+          <button onclick="useSuggestion('Je stresse pour l’école')">
+            📚 Je stresse pour l'école
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- INDICATEUR -->
+
+      <div id="typing" class="typing">
+        <span></span>
+        <span></span>
+        <span></span>
+        Enka écrit...
+      </div>
+
+
+      <!-- SAISIE -->
+
+      <div class="chat-input-area">
+
+        <textarea
+          id="messageInput"
+          placeholder="Écris ton message à Enka..."
+          rows="1"
+          onkeydown="handleKey(event)"
+        ></textarea>
+
+        <button
+          class="send-btn"
+          onclick="sendMessage()"
+          aria-label="Envoyer"
+        >
+          ➤
+        </button>
+
+      </div>
+
+      <p class="chat-info">
+        Enka peut se tromper. Pour les situations importantes,
+        parle aussi à une personne de confiance.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- PROFIL -->
+
+  <div id="profileModal" class="modal">
+
+    <div class="modal-box">
+
+      <button class="close" onclick="closeProfile()">×</button>
+
+      <div class="profile-big">
+        👤
+      </div>
+
+      <h2>Mon profil</h2>
+
+      <p>
+        Personnalise ton expérience Enka.
+      </p>
+
+      <button onclick="changeTheme()" class="setting-btn">
+        🎨 Changer de thème
+      </button>
+
+      <button onclick="resetTheme()" class="setting-btn">
+        ↩️ Réinitialiser
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- NAVIGATION -->
+
+  <nav class="bottom-nav">
+
+    <button onclick="goHome()">
+      <span>⌂</span>
+      Accueil
+    </button>
+
+    <button class="active">
+      <span>♡</span>
+      Enka
+    </button>
+
+    <button onclick="openProfile()">
+      <span>👤</span>
+      Profil
+    </button>
+
+  </nav>
+
+
+  <footer>
+    <strong>enka ♡</strong>
+    <p>Un endroit pour parler, demander et comprendre.</p>
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+           </html>
