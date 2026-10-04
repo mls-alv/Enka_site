@@ -1,0 +1,1213 @@
+/* =========================================
+   ENKA ♡ — SCRIPT
+========================================= */
+
+"use strict";
+
+
+/* =========================================
+   DONNÉES
+========================================= */
+
+const defaultQuestions = [
+  {
+    id: "q1",
+    category: "Amitié",
+    title: "J'ai l'impression que ma meilleure amie s'éloigne...",
+    text: "Depuis quelque temps elle parle beaucoup moins avec moi. Je ne sais pas si j'ai fait quelque chose.",
+    author: "anonyme",
+    time: "Aujourd'hui"
+  },
+  {
+    id: "q2",
+    category: "Amour",
+    title: "Comment savoir si je lui plais ?",
+    text: "On parle souvent et il y a parfois des petits regards, mais je ne sais vraiment pas quoi penser.",
+    author: "anonyme",
+    time: "Aujourd'hui"
+  },
+  {
+    id: "q3",
+    category: "École",
+    title: "Je stresse beaucoup avant les contrôles...",
+    text: "Même quand j'ai révisé, j'ai toujours peur d'oublier tout au moment du contrôle.",
+    author: "anonyme",
+    time: "Hier"
+  },
+  {
+    id: "q4",
+    category: "Musique",
+    title: "Vous écoutez quoi en ce moment ?",
+    text: "Je cherche de nouvelles chansons à ajouter à ma playlist.",
+    author: "anonyme",
+    time: "Hier"
+  },
+  {
+    id: "q5",
+    category: "Bien-être",
+    title: "Comment prendre un peu de temps pour soi ?",
+    text: "J'ai l'impression de toujours devoir faire quelque chose et j'aimerais apprendre à ralentir.",
+    author: "anonyme",
+    time: "Il y a 2 jours"
+  }
+];
+
+
+const quizQuestions = [
+
+  {
+    id: "identity",
+    title: "Tu es...",
+    description: "Tu peux répondre seulement si tu en as envie ♡",
+    multiple: false,
+    options: [
+      {
+        value: "girl",
+        title: "Une fille 🩷",
+        subtitle: "Une ambiance plutôt douce et rosée."
+      },
+      {
+        value: "boy",
+        title: "Un garçon 🩵",
+        subtitle: "Une ambiance douce avec une petite touche bleutée."
+      },
+      {
+        value: "secret",
+        title: "Tu préfères que ça reste secret 💜",
+        subtitle: "Ton identité reste complètement privée."
+      }
+    ]
+  },
+
+  {
+    id: "likes",
+    title: "Tu aimes quoi ?",
+    description: "Tu peux choisir plusieurs réponses.",
+    multiple: true,
+    options: [
+      { value: "love", title: "Les histoires d'amour 💕" },
+      { value: "friends", title: "L'amitié 🫶" },
+      { value: "series", title: "Les séries 🎬" },
+      { value: "games", title: "Les jeux 🎮" },
+      { value: "fashion", title: "La mode 👗" },
+      { value: "animals", title: "Les animaux 🐱" },
+      { value: "travel", title: "Les voyages ✈️" },
+      { value: "creative", title: "La créativité 🎨" }
+    ]
+  },
+
+  {
+    id: "music",
+    title: "Ton style de musique ?",
+    description: "Choisis celui qui te ressemble le plus.",
+    multiple: false,
+    options: [
+      { value: "kpop", title: "K-pop 🎀" },
+      { value: "rap", title: "Rap 🎤" },
+      { value: "hiphop", title: "Hip-hop 🖤" },
+      { value: "classic", title: "Classique 🎻" },
+      { value: "pop", title: "Pop 🎧" },
+      { value: "rock", title: "Rock 🎸" },
+      { value: "other", title: "Un peu de tout 🎶" }
+    ]
+  },
+
+  {
+    id: "style",
+    title: "Ton style ?",
+    description: "Il n'y a aucune mauvaise réponse.",
+    multiple: true,
+    options: [
+      { value: "girly", title: "Girly 🎀" },
+      { value: "cute", title: "Cute 🧸" },
+      { value: "simple", title: "Simple 🤍" },
+      { value: "street", title: "Street 🖤" },
+      { value: "elegant", title: "Élégant ✨" },
+      { value: "y2k", title: "Y2K 💿" },
+      { value: "cozy", title: "Cozy ☁️" }
+    ]
+  },
+
+  {
+    id: "color",
+    title: "Quelle ambiance te plaît ?",
+    description: "C'est surtout pour personnaliser ton Enka.",
+    multiple: false,
+    options: [
+      { value: "pink", title: "Rose poudré 🌷" },
+      { value: "pinkdark", title: "Rose foncé 🎀" },
+      { value: "purple", title: "Violet pastel 💜" },
+      { value: "cream", title: "Crème / blanc cassé 🤍" },
+      { value: "blue", title: "Bleu doux 🩵" }
+    ]
+  },
+
+  {
+    id: "enka",
+    title: "Tu viens sur Enka pour...",
+    description: "Cela permet de mieux adapter les suggestions.",
+    multiple: true,
+    options: [
+      { value: "ask", title: "Poser des questions 💬" },
+      { value: "read", title: "Lire les questions 👀" },
+      { value: "advice", title: "Donner des conseils 🫶" },
+      { value: "comfort", title: "Trouver du réconfort 🌷" },
+      { value: "chat", title: "Parler de tout 💕" }
+    ]
+  },
+
+  {
+    id: "mood",
+    title: "Ton mood aujourd'hui ?",
+    description: "Tu pourras le modifier plus tard.",
+    multiple: false,
+    options: [
+      { value: "happy", title: "Heureuse ☀️" },
+      { value: "calm", title: "Tranquille 🌸" },
+      { value: "tired", title: "Fatiguée 🌙" },
+      { value: "stressed", title: "Stressée 🫠" },
+      { value: "talk", title: "J'ai besoin de parler 💗" }
+    ]
+  },
+
+  {
+    id: "topics",
+    title: "Quels sujets veux-tu voir ?",
+    description: "Choisis tes thèmes préférés.",
+    multiple: true,
+    options: [
+      { value: "friendship", title: "Amitié 🫶" },
+      { value: "relationship", title: "Amour 💕" },
+      { value: "school", title: "École 📚" },
+      { value: "family", title: "Famille 🏡" },
+      { value: "wellbeing", title: "Bien-être 🌷" },
+      { value: "music", title: "Musique 🎧" },
+      { value: "random", title: "Un peu de tout ✨" }
+    ]
+  }
+
+];
+
+
+/* =========================================
+   ÉTAT
+========================================= */
+
+let profile = loadData("enkaProfile", {
+  username: "",
+  bio: "",
+  avatar: "🌸"
+});
+
+let quizData = loadData("enkaQuiz", {
+  identity: "",
+  likes: [],
+  music: "",
+  style: [],
+  color: "",
+  enka: [],
+  mood: "",
+  topics: []
+});
+
+let questions = loadData("enkaQuestions", defaultQuestions);
+
+let quizIndex = 0;
+let quizAnswers = {};
+let currentCategory = "Toutes";
+
+
+/* =========================================
+   THÈMES
+========================================= */
+
+const themes = {
+
+  pink: {
+    primary: "#c9829b",
+    dark: "#a96079",
+    secondary: "#f2dce3",
+    background: "#fcf8f6"
+  },
+
+  pinkdark: {
+    primary: "#b86d88",
+    dark: "#914c68",
+    secondary: "#efd2dc",
+    background: "#fdf7f9"
+  },
+
+  purple: {
+    primary: "#9d8ab8",
+    dark: "#786697",
+    secondary: "#e9e2f1",
+    background: "#faf8fc"
+  },
+
+  cream: {
+    primary: "#b99b76",
+    dark: "#8f754f",
+    secondary: "#eee4d5",
+    background: "#fcfaf5"
+  },
+
+  blue: {
+    primary: "#86aabd",
+    dark: "#5f879d",
+    secondary: "#dcecf3",
+    background: "#f7fbfd"
+  }
+};
+
+
+function applyTheme() {
+
+  let selected = quizData.color || "pink";
+
+  if (quizData.identity === "boy" && !quizData.color) {
+    selected = "blue";
+  }
+
+  if (quizData.identity === "secret" && !quizData.color) {
+    selected = "purple";
+  }
+
+  const theme = themes[selected] || themes.pink;
+
+  document.documentElement.style.setProperty("--primary", theme.primary);
+  document.documentElement.style.setProperty("--primary-dark", theme.dark);
+  document.documentElement.style.setProperty("--secondary", theme.secondary);
+  document.documentElement.style.setProperty("--background", theme.background);
+}
+
+
+/* =========================================
+   LOCAL STORAGE
+========================================= */
+
+function loadData(key, fallback) {
+
+  try {
+    const saved = localStorage.getItem(key);
+
+    if (!saved) {
+      return fallback;
+    }
+
+    return JSON.parse(saved);
+
+  } catch {
+    return fallback;
+  }
+}
+
+
+function saveData(key, data) {
+
+  localStorage.setItem(
+    key,
+    JSON.stringify(data)
+  );
+}
+
+
+/* =========================================
+   UTILITAIRES
+========================================= */
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function getTimeLabel() {
+  return "À l'instant";
+}
+
+
+function goHome(event) {
+
+  if (event) {
+    event.preventDefault();
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================================
+   QUIZ
+========================================= */
+
+function startQuiz() {
+
+  quizIndex = 0;
+  quizAnswers = {};
+
+  document.getElementById("quizScreen").style.display = "flex";
+  document.getElementById("quizScreen").style.opacity = "1";
+
+  renderQuiz();
+}
+
+
+function renderQuiz() {
+
+  const question = quizQuestions[quizIndex];
+
+  const content = document.getElementById("quizContent");
+  const step = document.getElementById("quizStep");
+  const progress = document.getElementById("quizProgressBar");
+
+  step.textContent =
+    `${quizIndex + 1} / ${quizQuestions.length}`;
+
+  progress.style.width =
+    `${((quizIndex + 1) / quizQuestions.length) * 100}%`;
+
+  let selectedValues = quizAnswers[question.id] || [];
+
+  if (!Array.isArray(selectedValues)) {
+    selectedValues = [selectedValues];
+  }
+
+  let optionsHTML = "";
+
+  question.options.forEach((option) => {
+
+    const selected = selectedValues.includes(option.value);
+
+    optionsHTML += `
+      <button
+        type="button"
+        class="quiz-option ${selected ? "selected" : ""}"
+        data-value="${escapeHTML(option.value)}"
+      >
+        <span class="quiz-option-title">
+          ${escapeHTML(option.title)}
+        </span>
+
+        ${
+          option.subtitle
+            ? `<span class="quiz-option-subtitle">
+                ${escapeHTML(option.subtitle)}
+              </span>`
+            : ""
+        }
+      </button>
+    `;
+  });
+
+  content.innerHTML = `
+    <h1 class="quiz-question">
+      ${escapeHTML(question.title)}
+    </h1>
+
+    <p class="quiz-description">
+      ${escapeHTML(question.description)}
+    </p>
+
+    <div class="quiz-options">
+      ${optionsHTML}
+    </div>
+
+    ${
+      question.multiple
+        ? `<p class="quiz-multiple-note">
+             ✦ Tu peux choisir plusieurs réponses.
+           </p>`
+        : ""
+    }
+  `;
+
+  document.querySelectorAll(".quiz-option").forEach((button) => {
+
+    button.addEventListener("click", () => {
+
+      const value = button.dataset.value;
+
+      if (question.multiple) {
+
+        let values = quizAnswers[question.id] || [];
+
+        if (!Array.isArray(values)) {
+          values = [values];
+        }
+
+        if (values.includes(value)) {
+          values = values.filter(item => item !== value);
+        } else {
+          values.push(value);
+        }
+
+        quizAnswers[question.id] = values;
+
+      } else {
+
+        quizAnswers[question.id] = [value];
+
+      }
+
+      renderQuiz();
+    });
+
+  });
+
+  document.getElementById("quizBack").style.visibility =
+    quizIndex === 0 ? "hidden" : "visible";
+
+  document.getElementById("quizNext").textContent =
+    quizIndex === quizQuestions.length - 1
+      ? "Créer mon Enka ♡"
+      : "Continuer →";
+}
+
+
+function nextQuizStep() {
+
+  const question = quizQuestions[quizIndex];
+  const answer = quizAnswers[question.id];
+
+  if (!answer || answer.length === 0) {
+
+    const content = document.getElementById("quizContent");
+
+    content.animate(
+      [
+        { transform: "translateX(0)" },
+        { transform: "translateX(-5px)" },
+        { transform: "translateX(5px)" },
+        { transform: "translateX(0)" }
+      ],
+      {
+        duration: 250
+      }
+    );
+
+    return;
+  }
+
+  if (quizIndex < quizQuestions.length - 1) {
+
+    quizIndex++;
+    renderQuiz();
+
+  } else {
+
+    finishQuiz();
+
+  }
+}
+
+
+function previousQuizStep() {
+
+  if (quizIndex > 0) {
+    quizIndex--;
+    renderQuiz();
+  }
+}
+
+
+function finishQuiz() {
+
+  quizData.identity =
+    (quizAnswers.identity || ["secret"])[0];
+
+  quizData.likes =
+    quizAnswers.likes || [];
+
+  quizData.music =
+    (quizAnswers.music || ["other"])[0];
+
+  quizData.style =
+    quizAnswers.style || [];
+
+  quizData.color =
+    (quizAnswers.color || ["pink"])[0];
+
+  quizData.enka =
+    quizAnswers.enka || [];
+
+  quizData.mood =
+    (quizAnswers.mood || ["calm"])[0];
+
+  quizData.topics =
+    quizAnswers.topics || [];
+
+  saveData("enkaQuiz", quizData);
+
+  applyTheme();
+
+  document.getElementById("quizScreen").style.opacity = "0";
+
+  setTimeout(() => {
+    document.getElementById("quizScreen").style.display = "none";
+    updatePersonalization();
+  }, 250);
+}
+
+
+function restartQuiz() {
+
+  closeProfile();
+
+  setTimeout(() => {
+    startQuiz();
+  }, 250);
+}
+
+
+/* =========================================
+   PERSONNALISATION / "IA"
+========================================= */
+
+function getAIMessage() {
+
+  const name =
+    profile.username.trim()
+      ? profile.username.trim()
+      : "toi";
+
+  if (quizData.mood === "stressed") {
+    return `Coucou ${name} ♡ Je t'ai préparé un Enka tout doux aujourd'hui. On peut commencer par quelque chose de léger si tu veux.`;
+  }
+
+  if (quizData.mood === "tired") {
+    return `Hey ${name} 🌙 Ton Enka est en mode tranquille. J'ai privilégié des contenus doux et faciles à parcourir.`;
+  }
+
+  if (quizData.mood === "talk") {
+    return `Je suis là, ${name} 💗 Ton espace est prêt pour les questions où tu as simplement besoin de parler.`;
+  }
+
+  if (quizData.music === "kpop") {
+    return `Hey ${name} 🎀 J'ai remarqué que tu aimais la K-pop. J'ai ajouté un peu plus de musique et de sujets pop dans tes suggestions.`;
+  }
+
+  if (quizData.likes.includes("animals")) {
+    return `Coucou ${name} 🐱 Ton profil aime les petites choses adorables. Ton Enka garde donc une ambiance douce et légère.`;
+  }
+
+  if (quizData.likes.includes("games")) {
+    return `Hey ${name} 🎮 Ton profil est plutôt joueur ! Je peux te proposer des sujets fun en plus des questions classiques.`;
+  }
+
+  if (quizData.likes.includes("fashion")) {
+    return `Coucou ${name} 👗 J'ai repéré ton côté mode. Ton Enka garde une petite touche tendance.`;
+  }
+
+  return `Coucou ${name} ♡ Ton Enka est personnalisé selon tes goûts. J'ai choisi une ambiance qui devrait te correspondre.`;
+}
+
+
+function getAISuggestions() {
+
+  const suggestions = [];
+
+  if (quizData.topics.includes("friendship")) {
+    suggestions.push("amitié");
+  }
+
+  if (quizData.topics.includes("relationship")) {
+    suggestions.push("amour");
+  }
+
+  if (quizData.topics.includes("school")) {
+    suggestions.push("école");
+  }
+
+  if (quizData.music === "kpop") {
+    suggestions.push("K-pop");
+  }
+
+  if (quizData.likes.includes("games")) {
+    suggestions.push("jeux");
+  }
+
+  if (quizData.likes.includes("animals")) {
+    suggestions.push("animaux");
+  }
+
+  if (suggestions.length === 0) {
+    suggestions.push("questions du moment", "découvertes");
+  }
+
+  return [...new Set(suggestions)].slice(0, 4);
+}
+
+
+function updatePersonalization() {
+
+  applyTheme();
+
+  document.getElementById("aiMessage").textContent =
+    getAIMessage();
+
+  document.getElementById("aiBadgeText").textContent =
+    getAIBadge();
+
+  const suggestions =
+    getAISuggestions();
+
+  document.getElementById("aiSuggestions").innerHTML =
+    suggestions.map(item => `
+      <span class="ai-suggestion">
+        ${escapeHTML(item)}
+      </span>
+    `).join("");
+
+  updateProfileUI();
+}
+
+
+function getAIBadge() {
+
+  if (quizData.music === "kpop") {
+    return "mode K-pop activé";
+  }
+
+  if (quizData.mood === "calm") {
+    return "ambiance toute douce";
+  }
+
+  if (quizData.mood === "stressed") {
+    return "mode douceur activé";
+  }
+
+  if (quizData.likes.includes("fashion")) {
+    return "ton espace tendance";
+  }
+
+  return "ton espace personnalisé";
+}
+
+
+/* =========================================
+   QUESTIONS
+========================================= */
+
+function renderQuestions(list = questions) {
+
+  const container =
+    document.getElementById("questionsList");
+
+  if (!list.length) {
+
+    container.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size:32px;margin-bottom:8px;">♡</div>
+        <strong>Aucune question trouvée</strong>
+        <p>Essaie une autre recherche ou une autre catégorie.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    list.map(question => `
+
+      <article class="question-card">
+
+        <div class="question-top">
+
+          <span class="question-category">
+            ${escapeHTML(question.category)}
+          </span>
+
+          <span class="question-time">
+            ${escapeHTML(question.time || "Aujourd'hui")}
+          </span>
+
+        </div>
+
+        <h3>
+          ${escapeHTML(question.title)}
+        </h3>
+
+        <p>
+          ${escapeHTML(question.text)}
+        </p>
+
+        <button
+          class="read-button"
+          type="button"
+          onclick="readQuestion('${escapeHTML(question.id)}')"
+        >
+          Lire et découvrir la réponse →
+        </button>
+
+      </article>
+
+    `).join("");
+}
+
+
+function filterQuestions() {
+
+  const search =
+    document.getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const filtered =
+    questions.filter(question => {
+
+      const categoryOK =
+        currentCategory === "Toutes" ||
+        question.category === currentCategory;
+
+      const searchOK =
+        !search ||
+        question.title.toLowerCase().includes(search) ||
+        question.text.toLowerCase().includes(search) ||
+        question.category.toLowerCase().includes(search);
+
+      return categoryOK && searchOK;
+    });
+
+  renderQuestions(filtered);
+}
+
+
+function showAllQuestions() {
+
+  currentCategory = "Toutes";
+
+  document.querySelectorAll(".category")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.category === "Toutes"
+      );
+    });
+
+  document.getElementById("searchInput").value = "";
+
+  renderQuestions(questions);
+
+  document.querySelector(".questions-section")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+}
+
+
+/* =========================================
+   CATÉGORIES
+========================================= */
+
+function setupCategories() {
+
+  document.querySelectorAll(".category")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        currentCategory =
+          button.dataset.category;
+
+        document.querySelectorAll(".category")
+          .forEach(item => {
+            item.classList.remove("active");
+          });
+
+        button.classList.add("active");
+
+        filterQuestions();
+      });
+
+    });
+}
+
+
+/* =========================================
+   PUBLICATION
+========================================= */
+
+function publishQuestion() {
+
+  const category =
+    document.getElementById("questionCategory").value;
+
+  const text =
+    document.getElementById("questionText").value.trim();
+
+  if (!text) {
+
+    document.getElementById("questionText").focus();
+
+    return;
+  }
+
+  const question = {
+
+    id:
+      "question-" +
+      Date.now(),
+
+    category,
+
+    title:
+      createQuestionTitle(text),
+
+    text,
+
+    author:
+      profile.username.trim() || "anonyme",
+
+    time:
+      getTimeLabel()
+  };
+
+  questions.unshift(question);
+
+  saveData(
+    "enkaQuestions",
+    questions
+  );
+
+  closeQuestionModal();
+
+  document.getElementById("questionText").value = "";
+
+  currentCategory = "Toutes";
+
+  document.querySelectorAll(".category")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.category === "Toutes"
+      );
+    });
+
+  renderQuestions(questions);
+
+  document.querySelector(".questions-section")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+}
+
+
+function createQuestionTitle(text) {
+
+  const cleaned =
+    text.replace(/\s+/g, " ").trim();
+
+  if (cleaned.length <= 65) {
+    return cleaned;
+  }
+
+  return cleaned.slice(0, 62) + "...";
+}
+
+
+/* =========================================
+   RÉPONSE IA
+========================================= */
+
+function generateAnswer(question) {
+
+  const category =
+    question.category;
+
+  if (category === "Amitié") {
+    return "Essaie de ne pas tirer de conclusion trop vite. Quand quelque chose te préoccupe avec une amie, une discussion calme et honnête peut souvent aider à comprendre ce qui se passe. Et tu as le droit de prendre un peu de recul si tu en as besoin. ♡";
+  }
+
+  if (category === "Amour") {
+    return "Les signes peuvent parfois être difficiles à interpréter. Le mieux est de rester toi-même, de prendre ton temps et de regarder surtout comment cette personne se comporte régulièrement avec toi. Tu n'as pas besoin de tout comprendre immédiatement. 💕";
+  }
+
+  if (category === "École") {
+    return "Tu n'as pas besoin d'être parfaite pour progresser. Essaie de découper ce qui te stresse en petites étapes et pense à faire des pauses. Demander de l'aide à un professeur, un parent ou une personne de confiance peut aussi vraiment aider. 📚";
+  }
+
+  if (category === "Famille") {
+    return "Les relations familiales peuvent être compliquées. Tes émotions restent importantes, même lorsque les autres ne les comprennent pas immédiatement. Si quelque chose te pèse beaucoup, en parler à une personne adulte de confiance peut être une bonne idée. 🏡";
+  }
+
+  if (category === "Bien-être") {
+    return "Prends les choses petit à petit. Une pause, une activité que tu apprécies ou simplement quelques minutes loin de ce qui te prend la tête peuvent déjà faire du bien. Et si tu te sens vraiment mal, n'hésite pas à en parler à quelqu'un de confiance. 🌷";
+  }
+
+  if (category === "Musique") {
+    if (quizData.music === "kpop") {
+      return "Vu ton profil K-pop 🎀, tu pourrais explorer de nouveaux artistes ou créer une playlist par ambiance : énergie, chill, danse ou soirée tranquille.";
+    }
+
+    if (quizData.music === "rap" || quizData.music === "hiphop") {
+      return "Ton profil aime le rap et le hip-hop 🎤. Une playlist avec plusieurs styles et époques peut être super sympa pour découvrir de nouveaux artistes.";
+    }
+
+    return "La musique est parfaite pour créer une ambiance. Tu peux tester des playlists par humeur plutôt que par genre et garder les chansons qui te font vraiment quelque chose. 🎧";
+  }
+
+  return "Il n'y a pas toujours une réponse parfaite à une question. Essaie de regarder ce que tu ressens, ce dont tu as besoin et ce qui te ferait te sentir le mieux. Tu peux aussi en parler avec quelqu'un de confiance. ✨";
+}
+
+
+function readQuestion(id) {
+
+  const question =
+    questions.find(item => item.id === id);
+
+  if (!question) {
+    return;
+  }
+
+  document.getElementById("readCategory").textContent =
+    question.category;
+
+  document.getElementById("readTitle").textContent =
+    question.title;
+
+  document.getElementById("readText").textContent =
+    question.text;
+
+  document.getElementById("readAnswer").textContent =
+    generateAnswer(question);
+
+  document.getElementById("readModal")
+    .classList.remove("hidden");
+}
+
+
+function closeReadModal() {
+
+  document.getElementById("readModal")
+    .classList.add("hidden");
+}
+
+
+/* =========================================
+   MODAL QUESTION
+========================================= */
+
+function openQuestionModal() {
+
+  document.getElementById("questionModal")
+    .classList.remove("hidden");
+
+  setTimeout(() => {
+    document.getElementById("questionText").focus();
+  }, 100);
+}
+
+
+function closeQuestionModal() {
+
+  document.getElementById("questionModal")
+    .classList.add("hidden");
+}
+
+
+/* =========================================
+   PROFIL
+========================================= */
+
+function openProfile() {
+
+  updateProfileUI();
+
+  document.getElementById("profileModal")
+    .classList.remove("hidden");
+}
+
+
+function closeProfile() {
+
+  document.getElementById("profileModal")
+    .classList.add("hidden");
+}
+
+
+function updateProfileUI() {
+
+  document.getElementById("headerAvatar").textContent =
+    profile.avatar;
+
+  document.getElementById("headerUsername").textContent =
+    profile.username.trim() || "Mon profil";
+
+  document.getElementById("profileAvatarPreview").textContent =
+    profile.avatar;
+
+  document.getElementById("profilePreviewName").textContent =
+    profile.username.trim() || "Mon profil";
+
+  document.getElementById("profilePreviewBio").textContent =
+    profile.bio.trim() || "Bienvenue sur enka ♡";
+
+  document.getElementById("profileName").value =
+    profile.username;
+
+  document.getElementById("profileBio").value =
+    profile.bio;
+
+  document.querySelectorAll(".avatar-choices button")
+    .forEach(button => {
+      button.classList.toggle(
+        "selected",
+        button.dataset.avatar === profile.avatar
+      );
+    });
+}
+
+
+function saveProfile() {
+
+  const username =
+    document.getElementById("profileName")
+      .value
+      .trim();
+
+  const bio =
+    document.getElementById("profileBio")
+      .value
+      .trim();
+
+  profile.username =
+    username.slice(0, 20);
+
+  profile.bio =
+    bio.slice(0, 100);
+
+  saveData(
+    "enkaProfile",
+    profile
+  );
+
+  updateProfileUI();
+  updatePersonalization();
+
+  closeProfile();
+}
+
+
+/* =========================================
+   ÉVÉNEMENTS
+========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  applyTheme();
+
+  renderQuestions();
+
+  setupCategories();
+
+  document.getElementById("searchInput")
+    .addEventListener(
+      "input",
+      filterQuestions
+    );
+
+  const textarea =
+    document.getElementById("questionText");
+
+  textarea.addEventListener("input", () => {
+
+    document.getElementById("questionCounter")
+      .textContent =
+      `${textarea.value.length} / 500`;
+  });
+
+
+  document.getElementById("quizNext")
+    .addEventListener(
+      "click",
+      nextQuizStep
+    );
+
+  document.getElementById("quizBack")
+    .addEventListener(
+      "click",
+      previousQuizStep
+    );
+
+
+  document.querySelectorAll("#avatarChoices button")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        profile.avatar =
+          button.dataset.avatar;
+
+        document.getElementById(
+          "profileAvatarPreview"
+        ).textContent = profile.avatar;
+
+        document.querySelectorAll(
+          "#avatarChoices button"
+        ).forEach(item => {
+          item.classList.remove("selected");
+        });
+
+        button.classList.add("selected");
+      });
+
+    });
+
+
+  updatePersonalization();
+
+
+  const quizDone =
+    localStorage.getItem("enkaQuizDone");
+
+  if (!quizDone) {
+
+    setTimeout(() => {
+      startQuiz();
+    }, 500);
+
+  } else {
+
+    document.getElementById("quizScreen")
+      .style.display = "none";
+  }
+
+
+  document.addEventListener("keydown", event => {
+
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    closeQuestionModal();
+    closeReadModal();
+    closeProfile();
+  });
+
+});
+
+
+/* =========================================
+   MARQUER LE QUIZ COMME TERMINÉ
+========================================= */
+
+const originalFinishQuiz = finishQuiz;
+
+finishQuiz = function() {
+
+  originalFinishQuiz();
+
+  localStorage.setItem(
+    "enkaQuizDone",
+    "true"
+  );
+};
