@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>enka ♡</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">enka <span>♡</span></div>
+
+    <button class="profile-btn" onclick="showProfile()">
+      👤
+    </button>
+  </header>
+
+
+  <!-- ACCUEIL -->
+  <main>
+
+    <section class="hero">
+      <div class="hero-content">
+        <p class="small-title">BIENVENUE SUR ENKA ✨</p>
+
+        <h1>
+          Tu peux tout<br>
+          <span>demander ici.</span>
+        </h1>
+
+        <p class="hero-text">
+          Une question, un doute ou juste besoin d'aide ?
+          Pose-la sans jugement.
+        </p>
+
+        <button class="main-btn" onclick="openQuestion()">
+          Poser ma question 💬
+        </button>
+      </div>
+    </section>
+
+
+    <!-- RECHERCHE -->
+    <section class="search-section">
+      <div class="search-box">
+        <span>🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Rechercher une question..."
+          oninput="searchQuestions()"
+        >
+      </div>
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section class="section">
+      <div class="section-title">
+        <h2>Explorer</h2>
+        <button onclick="showAll()">Voir tout</button>
+      </div>
+
+      <div class="categories">
+
+        <button class="category-card" onclick="selectCategory('Amitié')">
+          <div class="category-icon">🫶</div>
+          <strong>Amitié</strong>
+          <span>Relations & amis</span>
+        </button>
+
+        <button class="category-card" onclick="selectCategory('Amour')">
+          <div class="category-icon">💗</div>
+          <strong>Amour</strong>
+          <span>Questions & sentiments</span>
+        </button>
+
+        <button class="category-card" onclick="selectCategory('École')">
+          <div class="category-icon">📚</div>
+          <strong>École</strong>
+          <span>Cours & orientation</span>
+        </button>
+
+        <button class="category-card" onclick="selectCategory('Famille')">
+          <div class="category-icon">🏠</div>
+          <strong>Famille</strong>
+          <span>Vie à la maison</span>
+        </button>
+
+        <button class="category-card" onclick="selectCategory('Bien-être')">
+          <div class="category-icon">🌿</div>
+          <strong>Bien-être</strong>
+          <span>Se sentir mieux</span>
+        </button>
+
+        <button class="category-card" onclick="selectCategory('Autre')">
+          <div class="category-icon">✨</div>
+          <strong>Autre</strong>
+          <span>Tout le reste</span>
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- QUESTIONS POPULAIRES -->
+    <section class="section questions-section">
+
+      <div class="section-title">
+        <h2>Questions du moment</h2>
+        <button onclick="showAll()">Voir tout</button>
+      </div>
+
+      <div id="questionsList">
+
+        <article class="question-card">
+          <div class="question-top">
+            <span class="tag">AMITIÉ</span>
+            <span>♡</span>
+          </div>
+
+          <h3>
+            Comment savoir si une personne est vraiment mon amie ?
+          </h3>
+
+          <p>
+            Une question que beaucoup de personnes se posent...
+          </p>
+
+          <button onclick="readQuestion(this)">
+            Lire la réponse →
+          </button>
+        </article>
+
+
+        <article class="question-card">
+          <div class="question-top">
+            <span class="tag">ÉCOLE</span>
+            <span>♡</span>
+          </div>
+
+          <h3>
+            Comment gérer le stress avant un contrôle ?
+          </h3>
+
+          <p>
+            Quelques idées simples pour mieux gérer la pression.
+          </p>
+
+          <button onclick="readQuestion(this)">
+            Lire la réponse →
+          </button>
+        </article>
+
+
+        <article class="question-card">
+          <div class="question-top">
+            <span class="tag">BIEN-ÊTRE</span>
+            <span>♡</span>
+          </div>
+
+          <h3>
+            Pourquoi est-ce que je me sens parfois perdu(e) ?
+          </h3>
+
+          <p>
+            Il est normal d'avoir parfois besoin de comprendre ce qu'on ressent.
+          </p>
+
+          <button onclick="readQuestion(this)">
+            Lire la réponse →
+          </button>
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- POPUP QUESTION -->
+  <div class="modal" id="questionModal">
+
+    <div class="modal-content">
+
+      <button class="close-btn" onclick="closeQuestion()">×</button>
+
+      <p class="small-title">UNE QUESTION ? 💗</p>
+
+      <h2>Qu'est-ce que tu veux demander ?</h2>
+
+      <textarea
+        id="questionText"
+        placeholder="Écris ta question ici..."
+      ></textarea>
+
+      <div class="modal-actions">
+
+        <button class="cancel-btn" onclick="closeQuestion()">
+          Annuler
+        </button>
+
+        <button class="main-btn" onclick="sendQuestion()">
+          Publier
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- POPUP PROFIL -->
+  <div class="modal" id="profileModal">
+
+    <div class="modal-content profile-modal">
+
+      <button class="close-btn" onclick="closeProfile()">×</button>
+
+      <div class="profile-icon">👤</div>
+
+      <h2>Mon profil</h2>
+
+      <p>
+        Personnalise ton expérience sur enka.
+      </p>
+
+      <button class="settings-btn" onclick="changeTheme()">
+        🎨 Changer de thème
+      </button>
+
+      <button class="settings-btn" onclick="resetTheme()">
+        ↩️ Réinitialiser le thème
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- NAVIGATION MOBILE -->
+  <nav class="bottom-nav">
+
+    <button class="active" onclick="goHome()">
+      <span>⌂</span>
+      Accueil
+    </button>
+
+    <button onclick="openQuestion()">
+      <span>＋</span>
+      Question
+    </button>
+
+    <button onclick="showProfile()">
+      <span>♡</span>
+      Profil
+    </button>
+
+  </nav>
+
+
+  <footer>
+    <div class="logo">enka <span>♡</span></div>
+    <p>Un endroit pour poser tes questions.</p>
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+  </html>
