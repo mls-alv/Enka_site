@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="enka ♡ — un espace pour poser tes questions et échanger avec bienveillance.">
+  <title>enka ♡</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       QUIZ DE BIENVENUE
+  ========================== -->
+  <div id="quizScreen" class="quiz-screen">
+    <div class="quiz-box">
+
+      <div class="quiz-logo">enka <span>♡</span></div>
+
+      <div class="quiz-progress">
+        <div id="quizProgressBar"></div>
+      </div>
+
+      <p id="quizStep" class="quiz-step">1 / 8</p>
+
+      <div id="quizContent"></div>
+
+      <div class="quiz-buttons">
+        <button id="quizBack" class="secondary-btn" type="button">
+          ← Retour
+        </button>
+
+        <button id="quizNext" class="main-btn" type="button">
+          Continuer →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="header">
+    <div class="header-inner">
+
+      <a href="#" class="logo" onclick="goHome(event)">
+        enka <span>♡</span>
+      </a>
+
+      <button class="profile-button" type="button" onclick="openProfile()">
+        <span id="headerAvatar">🌸</span>
+        <span id="headerUsername">Mon profil</span>
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- =========================
+       CONTENU PRINCIPAL
+  ========================== -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-decoration decoration-one">♡</div>
+      <div class="hero-decoration decoration-two">✦</div>
+
+      <div class="hero-content">
+
+        <div class="ai-badge">
+          <span>✦</span>
+          <span id="aiBadgeText">Ton espace personnalisé</span>
+        </div>
+
+        <h1 id="heroTitle">
+          Bienvenue sur<br>
+          <span>enka ♡</span>
+        </h1>
+
+        <p id="heroText">
+          Un petit endroit où tu peux poser tes questions,
+          parler librement et trouver des conseils.
+        </p>
+
+        <button class="main-btn hero-btn" type="button" onclick="openQuestionModal()">
+          Poser ma question 💬
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- IA -->
+    <section class="ai-card-section">
+      <div class="ai-card">
+
+        <div class="ai-avatar">✦</div>
+
+        <div class="ai-card-content">
+          <div class="ai-card-title">
+            <span>Enka AI</span>
+            <small>personnalisée pour toi</small>
+          </div>
+
+          <p id="aiMessage">
+            Je découvre encore tes goûts...
+          </p>
+
+          <div id="aiSuggestions" class="ai-suggestions"></div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- RECHERCHE -->
+    <section class="search-section">
+      <div class="search-box">
+        <span>⌕</span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Rechercher une question..."
+          autocomplete="off"
+        >
+      </div>
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section class="section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">explore</p>
+          <h2>Les catégories</h2>
+        </div>
+      </div>
+
+      <div id="categories" class="categories">
+
+        <button class="category active" data-category="Toutes">
+          <span>♡</span>
+          <strong>Toutes</strong>
+        </button>
+
+        <button class="category" data-category="Amitié">
+          <span>🫶</span>
+          <strong>Amitié</strong>
+        </button>
+
+        <button class="category" data-category="Amour">
+          <span>💕</span>
+          <strong>Amour</strong>
+        </button>
+
+        <button class="category" data-category="École">
+          <span>📚</span>
+          <strong>École</strong>
+        </button>
+
+        <button class="category" data-category="Famille">
+          <span>🏡</span>
+          <strong>Famille</strong>
+        </button>
+
+        <button class="category" data-category="Bien-être">
+          <span>🌷</span>
+          <strong>Bien-être</strong>
+        </button>
+
+        <button class="category" data-category="Musique">
+          <span>🎧</span>
+          <strong>Musique</strong>
+        </button>
+
+        <button class="category" data-category="Autre">
+          <span>✨</span>
+          <strong>Autre</strong>
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- QUESTIONS -->
+    <section class="section questions-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">pour toi</p>
+          <h2 id="questionsTitle">Questions du moment</h2>
+        </div>
+
+        <button class="text-button" type="button" onclick="showAllQuestions()">
+          Tout voir →
+        </button>
+      </div>
+
+      <div id="questionsList" class="questions-list"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       MODAL QUESTION
+  ========================== -->
+  <div id="questionModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeQuestionModal()"></div>
+
+    <div class="modal-card">
+
+      <button class="close-button" type="button" onclick="closeQuestionModal()">
+        ×
+      </button>
+
+      <div class="modal-icon">💬</div>
+
+      <p class="eyebrow">une petite question</p>
+      <h2>Qu'est-ce que tu veux demander ?</h2>
+
+      <p class="modal-description">
+        Tu peux rester anonyme si tu le souhaites.
+      </p>
+
+      <label for="questionCategory">Catégorie</label>
+
+      <select id="questionCategory">
+        <option>Amitié</option>
+        <option>Amour</option>
+        <option>École</option>
+        <option>Famille</option>
+        <option>Bien-être</option>
+        <option>Musique</option>
+        <option>Autre</option>
+      </select>
+
+      <label for="questionText">Ta question</label>
+
+      <textarea
+        id="questionText"
+        maxlength="500"
+        placeholder="Écris ta question ici..."
+      ></textarea>
+
+      <div class="textarea-footer">
+        <span>Pas besoin de mettre ton vrai prénom ♡</span>
+        <span id="questionCounter">0 / 500</span>
+      </div>
+
+      <button class="main-btn full-btn" type="button" onclick="publishQuestion()">
+        Publier ma question ♡
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- =========================
+       MODAL LECTURE
+  ========================== -->
+  <div id="readModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeReadModal()"></div>
+
+    <div class="modal-card read-card">
+
+      <button class="close-button" type="button" onclick="closeReadModal()">
+        ×
+      </button>
+
+      <div id="readCategory" class="question-category"></div>
+
+      <h2 id="readTitle"></h2>
+
+      <div class="read-question">
+        <span>♡</span>
+        <p id="readText"></p>
+      </div>
+
+      <div class="answer-box">
+        <div class="answer-avatar">✦</div>
+
+        <div>
+          <strong>Enka AI</strong>
+          <p id="readAnswer"></p>
+        </div>
+      </div>
+
+      <button class="secondary-btn full-btn" type="button" onclick="closeReadModal()">
+        Fermer
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- =========================
+       MODAL PROFIL
+  ========================== -->
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeProfile()"></div>
+
+    <div class="modal-card profile-card">
+
+      <button class="close-button" type="button" onclick="closeProfile()">
+        ×
+      </button>
+
+      <p class="eyebrow">mon espace</p>
+      <h2>Personnalise ton profil</h2>
+
+      <div class="profile-preview">
+        <div id="profileAvatarPreview" class="big-avatar">🌸</div>
+
+        <div>
+          <strong id="profilePreviewName">Mon profil</strong>
+          <span id="profilePreviewBio">Bienvenue sur enka ♡</span>
+        </div>
+      </div>
+
+      <label for="profileName">Ton pseudo</label>
+      <input
+        id="profileName"
+        type="text"
+        maxlength="20"
+        placeholder="Ex : loulou ♡"
+      >
+
+      <label for="profileBio">Ta bio</label>
+      <textarea
+        id="profileBio"
+        maxlength="100"
+        placeholder="Une petite phrase sur toi..."
+      ></textarea>
+
+      <label>Ton avatar</label>
+
+      <div id="avatarChoices" class="avatar-choices">
+        <button type="button" data-avatar="🌸">🌸</button>
+        <button type="button" data-avatar="🎀">🎀</button>
+        <button type="button" data-avatar="🦋">🦋</button>
+        <button type="button" data-avatar="🐰">🐰</button>
+        <button type="button" data-avatar="🐱">🐱</button>
+        <button type="button" data-avatar="🌙">🌙</button>
+        <button type="button" data-avatar="⭐">⭐</button>
+        <button type="button" data-avatar="💗">💗</button>
+      </div>
+
+      <div class="profile-actions">
+        <button class="secondary-btn" type="button" onclick="restartQuiz()">
+          Refaire mon quiz
+        </button>
+
+        <button class="main-btn" type="button" onclick="saveProfile()">
+          Enregistrer
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =========================
+       NAV MOBILE
+  ========================== -->
+  <nav class="mobile-nav">
+
+    <button type="button" onclick="goHome()">
+      <span>⌂</span>
+      <small>Accueil</small>
+    </button>
+
+    <button type="button" onclick="openQuestionModal()">
+      <span class="nav-plus">+</span>
+      <small>Question</small>
+    </button>
+
+    <button type="button" onclick="openProfile()">
+      <span>♡</span>
+      <small>Profil</small>
+    </button>
+
+  </nav>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer>
+    <div class="footer-logo">enka ♡</div>
+    <p>Un petit endroit pour parler, écouter et se sentir moins seul.</p>
+    <span>fait avec beaucoup de douceur ♡</span>
+  </footer>
+
+
+  <script src="script.js"></script>
+</body>
+          </html>
