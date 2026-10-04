@@ -1,0 +1,1194 @@
+// ==========================
+// ENKA - SCRIPT
+// ==========================
+
+
+// ==========================
+// THÈMES
+// ==========================
+
+const themes = {
+  girl: {
+    primary: "#e85d91",
+    secondary: "#f8d9e6",
+    background: "#fff9fc"
+  },
+
+  boy: {
+    primary: "#4d7cff",
+    secondary: "#dce7ff",
+    background: "#f8faff"
+  },
+
+  neutral: {
+    primary: "#8667d8",
+    secondary: "#e8e0ff",
+    background: "#faf9ff"
+  }
+};
+
+
+function applyTheme(themeName) {
+
+  const theme = themes[themeName];
+
+  if (!theme) return;
+
+  document.documentElement.style.setProperty(
+    "--primary",
+    theme.primary
+  );
+
+  document.documentElement.style.setProperty(
+    "--secondary",
+    theme.secondary
+  );
+
+  document.documentElement.style.setProperty(
+    "--background",
+    theme.background
+  );
+}
+
+
+// ==========================
+// DONNÉES
+// ==========================
+
+let questions = JSON.parse(
+  localStorage.getItem("enkaQuestions")
+) || [
+
+  {
+    id: Date.now() + 1,
+    category: "Amitié",
+    title: "Comment savoir si une personne est vraiment mon amie ?",
+    description: "Une question que beaucoup de personnes se posent...",
+    answer:
+      "Une vraie amitié repose généralement sur le respect, la confiance et la possibilité d'être soi-même. Une personne peut être une vraie amie même si elle n'est pas toujours d'accord avec toi."
+  },
+
+  {
+    id: Date.now() + 2,
+    category: "École",
+    title: "Comment gérer le stress avant un contrôle ?",
+    description: "Quelques idées simples pour mieux gérer la pression.",
+    answer:
+      "Essaie de préparer tes affaires à l'avance, de réviser par petites sessions et de prendre quelques respirations lentes avant le contrôle. Tu n'as pas besoin d'être parfait(e) pour réussir."
+  },
+
+  {
+    id: Date.now() + 3,
+    category: "Bien-être",
+    title: "Pourquoi est-ce que je me sens parfois perdu(e) ?",
+    description: "Il est normal d'avoir parfois besoin de comprendre ce qu'on ressent.",
+    answer:
+      "Se sentir perdu(e) peut arriver lorsqu'on traverse beaucoup de changements ou qu'on réfléchit à son avenir. Prendre le temps d'identifier ce que tu ressens peut déjà aider."
+  }
+
+];
+
+
+let currentCategory = "Toutes";
+
+
+// ==========================
+// SAUVEGARDE
+// ==========================
+
+function saveQuestions() {
+
+  localStorage.setItem(
+    "enkaQuestions",
+    JSON.stringify(questions)
+  );
+
+}
+
+
+// ==========================
+// QUESTION
+// ==========================
+
+function openQuestion() {
+
+  document
+    .getElementById("questionModal")
+    .classList.add("show");
+
+  setTimeout(() => {
+
+    document
+      .getElementById("questionText")
+      .focus();
+
+  }, 100);
+
+}
+
+
+function closeQuestion() {
+
+  document
+    .getElementById("questionModal")
+    .classList.remove("show");
+
+}
+
+
+// ==========================
+// PUBLIER UNE QUESTION
+// ==========================
+
+function sendQuestion() {
+
+  const textarea =
+    document.getElementById("questionText");
+
+  const questionText =
+    textarea.value.trim();
+
+
+  if (!questionText) {
+
+    alert("Écris d'abord ta question 💗");
+
+    textarea.focus();
+
+    return;
+  }
+
+
+  let category = prompt(
+    "Dans quelle catégorie veux-tu mettre ta question ?\n\n" +
+    "Amitié\n" +
+    "Amour\n" +
+    "École\n" +
+    "Famille\n" +
+    "Bien-être\n" +
+    "Autre"
+  );
+
+
+  if (!category) {
+
+    category = "Autre";
+
+  }
+
+
+  const categories = [
+    "Amitié",
+    "Amour",
+    "École",
+    "Famille",
+    "Bien-être",
+    "Autre"
+  ];
+
+
+  const foundCategory =
+    categories.find(
+      item =>
+        item.toLowerCase() ===
+        category.trim().toLowerCase()
+    );
+
+
+  category =
+    foundCategory || "Autre";
+
+
+  const newQuestion = {
+
+    id: Date.now(),
+
+    category: category,
+
+    title: questionText,
+
+    description:
+      "Question publiée sur enka.",
+
+    answer:
+      "Cette question vient d'être publiée. Une réponse pourra être ajoutée plus tard ✨"
+
+  };
+
+
+  questions.unshift(newQuestion);
+
+  saveQuestions();
+
+  renderQuestions();
+
+  textarea.value = "";
+
+  closeQuestion();
+
+
+  alert(
+    "Ta question a bien été publiée ! ✨"
+  );
+
+
+  document
+    .getElementById("questionsList")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+}
+
+
+// ==========================
+// AFFICHER LES QUESTIONS
+// ==========================
+
+function renderQuestions() {
+
+  const container =
+    document.getElementById("questionsList");
+
+
+  if (!container) return;
+
+
+  container.innerHTML = "";
+
+
+  const searchInput =
+    document
+      .getElementById("searchInput")
+      ?.value
+      .toLowerCase()
+      .trim() || "";
+
+
+  const filteredQuestions =
+    questions.filter(question => {
+
+      const matchesCategory =
+        currentCategory === "Toutes" ||
+        question.category === currentCategory;
+
+
+      const searchableText =
+        (
+          question.title +
+          " " +
+          question.description +
+          " " +
+          question.category
+        ).toLowerCase();
+
+
+      const matchesSearch =
+        searchableText.includes(searchInput);
+
+
+      return (
+        matchesCategory &&
+        matchesSearch
+      );
+
+    });
+
+
+  if (filteredQuestions.length === 0) {
+
+    container.innerHTML = `
+      <div class="empty-state">
+        <div>💭</div>
+        <h3>Aucune question trouvée</h3>
+        <p>Essaie une autre recherche ou publie ta propre question.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  filteredQuestions.forEach(question => {
+
+    const article =
+      document.createElement("article");
+
+    article.className = "question-card";
+
+
+    article.innerHTML = `
+
+      <div class="question-top">
+
+        <span class="tag">
+          ${escapeHTML(question.category).toUpperCase()}
+        </span>
+
+        <span>♡</span>
+
+      </div>
+
+      <h3>
+        ${escapeHTML(question.title)}
+      </h3>
+
+      <p>
+        ${escapeHTML(question.description)}
+      </p>
+
+      <button onclick="readQuestion(${question.id})">
+        Lire la réponse →
+      </button>
+
+    `;
+
+
+    container.appendChild(article);
+
+  });
+
+}
+
+
+// ==========================
+// LIRE UNE QUESTION
+// ==========================
+
+function readQuestion(id) {
+
+  const question =
+    questions.find(
+      item => item.id === id
+    );
+
+
+  if (!question) return;
+
+
+  const answer =
+    question.answer ||
+    "Aucune réponse pour le moment.";
+
+
+  alert(
+    "💗 " +
+    question.category +
+    "\n\n" +
+
+    question.title +
+
+    "\n\n" +
+
+    "Réponse :\n" +
+
+    answer
+  );
+
+}
+
+
+// ==========================
+// CATÉGORIES
+// ==========================
+
+function selectCategory(category) {
+
+  currentCategory = category;
+
+  renderQuestions();
+
+
+  const section =
+    document.querySelector(
+      ".questions-section"
+    );
+
+
+  if (section) {
+
+    section.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+}
+
+
+// ==========================
+// VOIR TOUT
+// ==========================
+
+function showAll() {
+
+  currentCategory = "Toutes";
+
+  const searchInput =
+    document.getElementById(
+      "searchInput"
+    );
+
+
+  if (searchInput) {
+
+    searchInput.value = "";
+
+  }
+
+
+  renderQuestions();
+
+
+  document
+    .querySelector(".questions-section")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+}
+
+
+// ==========================
+// RECHERCHE
+// ==========================
+
+function searchQuestions() {
+
+  renderQuestions();
+
+}
+
+
+// ==========================
+// PROFIL
+// ==========================
+
+function showProfile() {
+
+  document
+    .getElementById("profileModal")
+    .classList.add("show");
+
+}
+
+
+function closeProfile() {
+
+  document
+    .getElementById("profileModal")
+    .classList.remove("show");
+
+}
+
+
+// ==========================
+// CHANGER DE THÈME
+// ==========================
+
+function changeTheme() {
+
+  const choice =
+    prompt(
+      "Choisis ton thème :\n\n" +
+      "1 = Rose 🌸\n" +
+      "2 = Bleu 💙\n" +
+      "3 = Violet 💜"
+    );
+
+
+  if (choice === "1") {
+
+    applyTheme("girl");
+
+    localStorage.setItem(
+      "enkaTheme",
+      "girl"
+    );
+
+  }
+
+  else if (choice === "2") {
+
+    applyTheme("boy");
+
+    localStorage.setItem(
+      "enkaTheme",
+      "boy"
+    );
+
+  }
+
+  else if (choice === "3") {
+
+    applyTheme("neutral");
+
+    localStorage.setItem(
+      "enkaTheme",
+      "neutral"
+    );
+
+  }
+
+}
+
+
+// ==========================
+// RESET THÈME
+// ==========================
+
+function resetTheme() {
+
+  localStorage.removeItem(
+    "enkaTheme"
+  );
+
+  applyTheme("girl");
+
+}
+
+
+// ==========================
+// ACCUEIL
+// ==========================
+
+function goHome() {
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+}
+
+
+// ==========================
+// SÉCURITÉ HTML
+// ==========================
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+
+}
+
+
+// ==========================
+// FERMETURE DES MODALES
+// ==========================
+
+window.addEventListener(
+  "click",
+  function(event) {
+
+    const questionModal =
+      document.getElementById(
+        "questionModal"
+      );
+
+    const profileModal =
+      document.getElementById(
+        "profileModal"
+      );
+
+
+    if (
+      event.target ===
+      questionModal
+    ) {
+
+      closeQuestion();
+
+    }
+
+
+    if (
+      event.target ===
+      profileModal
+    ) {
+
+      closeProfile();
+
+    }
+
+  }
+);
+
+
+// ==========================
+// TOUCHE ESC
+// ==========================
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key !== "Escape") return;
+
+    closeQuestion();
+
+    closeProfile();
+
+  }
+);
+
+
+// ==========================
+// CHARGEMENT
+// ==========================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    const savedTheme =
+      localStorage.getItem(
+        "enkaTheme"
+      );
+
+
+    if (savedTheme) {
+
+      applyTheme(savedTheme);
+
+    }
+
+
+    renderQuestions();
+
+  }
+);
+
+:root {
+  --primary: #e85d91;
+  --secondary: #f8d9e6;
+  --background: #fff9fc;
+  --card: #ffffff;
+  --text: #24212a;
+  --muted: #77727d;
+  --border: #eee5eb;
+  --shadow: 0 10px 30px rgba(50, 30, 50, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+
+/* HEADER */
+
+.header {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 22px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  color: var(--primary);
+}
+
+.profile-btn {
+  border: none;
+  background: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  font-size: 19px;
+}
+
+
+/* HERO */
+
+.hero {
+  max-width: 1100px;
+  margin: 10px auto 0;
+  padding: 65px 25px;
+  border-radius: 35px;
+  background: linear-gradient(
+    135deg,
+    var(--secondary),
+    var(--background)
+  );
+}
+
+.hero-content {
+  max-width: 650px;
+}
+
+.small-title {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 15px;
+}
+
+.hero h1 {
+  font-size: clamp(45px, 7vw, 75px);
+  line-height: 0.95;
+  letter-spacing: -4px;
+  margin-bottom: 25px;
+}
+
+.hero h1 span {
+  color: var(--primary);
+}
+
+.hero-text {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 520px;
+  margin-bottom: 30px;
+}
+
+
+/* BOUTONS */
+
+.main-btn {
+  border: none;
+  background: var(--primary);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.main-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+
+/* SEARCH */
+
+.search-section {
+  max-width: 900px;
+  margin: 35px auto;
+  padding: 0 25px;
+}
+
+.search-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+.search-box span {
+  font-size: 18px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 15px;
+  background: transparent;
+  color: var(--text);
+}
+
+
+/* SECTIONS */
+
+.section {
+  max-width: 1100px;
+  margin: 50px auto;
+  padding: 0 25px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.section-title h2 {
+  font-size: 27px;
+  letter-spacing: -1px;
+}
+
+.section-title button {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* CATEGORIES */
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.category-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 20px 12px;
+  border-radius: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s;
+  color: var(--text);
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+.category-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 14px;
+  background: var(--secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.category-card strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.category-card span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+
+/* QUESTIONS */
+
+#questionsList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.question-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 23px;
+  box-shadow: var(--shadow);
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.tag {
+  background: var(--secondary);
+  color: var(--primary);
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.question-card h3 {
+  font-size: 18px;
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+
+.question-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.question-card button {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* MODALS */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 15, 25, 0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  border: none;
+  background: #f3f1f3;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.modal-content h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+textarea:focus {
+  border-color: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  border: none;
+  background: #f1eef1;
+  padding: 15px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.profile-modal {
+  text-align: center;
+}
+
+.profile-icon {
+  width: 75px;
+  height: 75px;
+  background: var(--secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+}
+
+.profile-modal p {
+  color: var(--muted);
+  margin-bottom: 25px;
+}
+
+.settings-btn {
+  display: block;
+  width: 100%;
+  border: none;
+  background: #f7f5f7;
+  padding: 15px;
+  border-radius: 14px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+/* NAVIGATION MOBILE */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(255,255,255,0.96);
+  border-top: 1px solid var(--border);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 90;
+}
+
+.bottom-nav button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.bottom-nav button span {
+  display: block;
+  font-size: 21px;
+  margin-bottom: 3px;
+}
+
+.bottom-nav button.active {
+  color: var(--primary);
+}
+
+
+/* FOOTER */
+
+footer {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--muted);
+}
+
+footer p {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+  .categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #questionsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+  body {
+    padding-bottom: 80px;
+  }
+
+  .header {
+    padding: 18px;
+  }
+
+  .hero {
+    margin: 0 12px;
+    padding: 45px 25px;
+    border-radius: 28px;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    letter-spacing: -3px;
+  }
+
+  .hero-text {
+    font-size: 15px;
+  }
+
+  .main-btn {
+    width: 100%;
+  }
+
+  .search-section {
+    padding: 0 15px;
+  }
+
+  .section {
+    padding: 0 15px;
+    margin: 40px auto;
+  }
+
+  .categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #questionsList {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  footer {
+    padding-bottom: 100px;
+  }
+
+    }
